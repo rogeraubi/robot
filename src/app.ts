@@ -24,14 +24,11 @@ function placeCommand(commandArgs: string) {
 // Function to handle different commands
 function handleCommand(command: string) {
   const parts = command.trim().toUpperCase().split(' ');
-  console.log(parts);
   const commandName = parts[0];
-  const commandArgs = parts[1]
-  console.log("aaa"+commandArgs);
-  
+  // const commandArgs = parts[1]
   switch (commandName) {
     case 'PLACE':
-      placeCommand(commandArgs);
+      placeCommand(parts[1]);
       break;
     case 'MOVE':
       robot.move();
@@ -67,10 +64,8 @@ function promptForChoice() {
           rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
           rl.prompt();
         } else if (choice === '2') {
-          // If the user chooses to process commands from a file (replace 'commands.txt' with your file path)
           fileInputEmitter.emit('processFileCommands', 'commands.txt');
         } else if (choice === '3') {
-          // If the user chooses to exit
           console.log('Goodbye!');
           process.exit(0);
         }
@@ -106,15 +101,12 @@ userInputEmitter.on('userInput', (line: string) => {
 
   rl.prompt();
 });
-
 // Start by prompting for the user's choice
 promptForChoice();
-
 // Event handler for processing commands from a file
 fileInputEmitter.on('processFileCommands', (filePath: string) => {
   const fileStream = fs.createReadStream(filePath, 'utf-8');
   const commands: string[] = [];
-
   fileStream.on('data', (data: string) => {
     // Split the file content into individual commands based on newlines
     const fileCommands = data.split('\n');
