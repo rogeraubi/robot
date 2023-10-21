@@ -1,68 +1,130 @@
 import ToyRobot from './toy-robot';
+import { isValidCommand } from '../utils/commandValidator';
+import * as readline from 'readline';
+import { EventEmitter } from 'events';
+import * as fs from 'fs';
 
-import { isValidCommand } from  "../utils/commandValidator";
-import readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 const tableSize = 5; // Specify the table size here
 const robot = new ToyRobot(tableSize);
-function placeCommand(command: string) {
-  command = command.trim().toUpperCase();
- const parts = command.split(' ');
+
+// Create event emitters for user input and file input
+const userInputEmitter = new EventEmitter();
+const fileInputEmitter = new EventEmitter();
+
+// Function to handle PLACE command
+function placeCommand(commandArgs: string) {
+    const [x, y, facing] = commandArgs.split(',');
+    robot.place(parseInt(x), parseInt(y), facing);
+  
+}
+// Function to handle different commands
+function handleCommand(command: string) {
+  const parts = command.trim().toUpperCase().split(' ');
+  console.log(parts);
   const commandName = parts[0];
-  const commandArgs = parts.slice(1);
-  console.log(commandArgs);
+  const commandArgs = parts[1]
+  console.log("aaa"+commandArgs);
+  
   switch (commandName) {
     case 'PLACE':
-        if (command.length === 1) {
-          const args = command[0].split(',');
-          if (args.length === 3) {
-            const x = parseInt(args[0], 10);
-            const y = parseInt(args[1], 10);
-            const facing = args[2];
-            robot.place(x, y, facing);
-          }
+      placeCommand(commandArgs);
+      break;
+    case 'MOVE':
+      robot.move();
+      break;
+    case 'LEFT':
+      robot.left();
+      break;
+    case 'RIGHT':
+      robot.right();
+      break;
+    case 'REPORT':
+      console.log(robot.report());
+      break;
+    default:
+      console.log('Invalid command');
+  }
+}
+
+// Function to validate the user's choice
+function validateChoice(choice: string) {
+  choice = choice.trim();
+  return choice === '1' || choice === '2' || choice === '3';
+}
+
+// Function to prompt the user for their choice
+function promptForChoice() {
+  rl.question(
+    'Choose an option:\n1. Enter commands directly\n2. Process commands from a file\n3. Exit\n',
+    (choice) => {
+      if (validateChoice(choice)) {
+        if (choice === '1') {
+          // If the user chooses to enter commands directly
+          rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
+          rl.prompt();
+        } else if (choice === '2') {
+          // If the user chooses to process commands from a file (replace 'commands.txt' with your file path)
+          fileInputEmitter.emit('processFileCommands', 'commands.txt');
+        } else if (choice === '3') {
+          // If the user chooses to exit
+          console.log('Goodbye!');
+          process.exit(0);
         }
-        break;
-      case 'MOVE':
-        robot.move();
-        break;
-      case 'LEFT':
-        robot.left();
-        break;
-      case 'RIGHT':
-        robot.right();
-        break;
-      case 'REPORT':
-        console.log(robot.report());
-        break;
-      default:
-        console.log('Invalid command');
+      } else {
+        console.log('Invalid choice. Please enter 1, 2, or 3.');
+        promptForChoice();
+      }
     }
+  );
 }
-function processCommand(command: string) {
-  if (isValidCommand(command)) {
-    if (command.trim().toUpperCase() === 'QUIT') {
-      console.log('Finished');
-      rl.close();
-      process.exit(0);
-     }
-    else {
-      placeCommand(command)
-    }
-  }
-  else {
-    console.log('Invalid command. Please enter a valid command.');
-  }
-}
-rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
-rl.prompt();
+
+// Event handler for user input
 rl.on('line', (line: string) => {
-  processCommand(line);
-  rl.prompt();
+  userInputEmitter.emit('userInput', line);
 }).on('close', () => {
   console.log('Bye!');
   process.exit(0);
 });
+
+// Event handler for processing user input commands
+userInputEmitter.on('userInput', (line: string) => {
+  if (isValidCommand(line)) {
+    if (line.toUpperCase() === 'QUIT') {
+      console.log('Finished');
+      rl.close();
+      process.exit(0);
+    } else {
+      handleCommand(line);
+    }
+  } else {
+    console.log('Invalid command. Please enter a valid command.');
+  }
+
+  rl.prompt();
+});
+
+// Start by prompting for the user's choice
+promptForChoice();
+
+// Event handler for processing commands from a file
+fileInputEmitter.on('processFileCommands', (filePath: string) => {
+  const fileStream = fs.createReadStream(filePath, 'utf-8');
+  const commands: string[] = [];
+
+  fileStream.on('data', (data: string) => {
+    // Split the file content into individual commands based on newlines
+    const fileCommands = data.split('\n');
+    commands.push(...fileCommands);
+  });
+
+  fileStream.on('end', () => {
+    // Process each command from the file
+    commands.forEach((command) => {
+      userInputEmitter.emit('userInput', command);
+    });
+  });
+})
