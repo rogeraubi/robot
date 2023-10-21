@@ -1,0 +1,45 @@
+{
+  "name": "robot",
+  "version": "1.0.0",
+  "description": "ronyRobot",
+  "main": "bundle.js",
+  "scripts": {
+    "dev": "ts-node src/app.ts",
+    "test": "mocha --require ts-node/register 'test/**/*.spec.ts'",
+    "build": "webpack --config webpack.config.js",
+    "production": "node dist/bundle.js",
+     "lint": "eslint '**/*.ts' --config .eslintrc.json",
+     "lint:fix": "eslint --fix '**/*.ts' --config .eslintrc.json",
+     "format": "prettier --write '**/*.ts'"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogeraubi/robot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rogeraubi/robot/issues"
+  },
+  "homepage": "https://github.com/rogeraubi/robot#readme",
+  "devDependencies": {
+    "@types/chai": "^4.3.9",
+    "@types/mocha": "^10.0.3",
+    "@types/node": "^20.8.7",
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0",
+    "ts-loader": "^9.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0",
+     "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3"
+  }
+}
