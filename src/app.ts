@@ -20,11 +20,11 @@ function placeCommand(commandArgs: string) {
   const [x, y, facing] = commandArgs.split(',');
   robot.place(parseInt(x), parseInt(y), facing);
 }
+
 // Function to handle different commands
 function handleCommand(command: string) {
   const parts = command.trim().toUpperCase().split(' ');
   const commandName = parts[0];
-  // const commandArgs = parts[1]
   switch (commandName) {
     case 'PLACE':
       placeCommand(parts[1]);
@@ -54,28 +54,28 @@ function validateChoice(choice: string) {
 
 // Function to prompt the user for their choice
 function promptForChoice() {
-  rl.question(
-    'Choose an option:\n1. Enter commands directly\n2. Process commands from a file\n3. Exit\n',
-    (choice) => {
-      if (validateChoice(choice)) {
-        if (choice === '1') {
-          // If the user chooses to enter commands directly
-          rl.setPrompt(
-            'Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ',
-          );
-          rl.prompt();
-        } else if (choice === '2') {
-          fileInputEmitter.emit('processFileCommands', 'data/commands.txt');
-        } else if (choice === '3') {
-          console.log('Goodbye!');
-          process.exit(0);
-        }
-      } else {
-        console.log('Invalid choice. Please enter 1, 2, or 3.');
-        promptForChoice();
-      }
-    },
-  );
+  rl.question('Choose an option:\n1. Enter commands directly\n2. Process commands from a file\n3. Exit\n', handleChoice);
+}
+
+// Function to handle the user's choice
+function handleChoice(choice: string) {
+  if (validateChoice(choice)) {
+    if (choice === '1') {
+      // If the user chooses to enter commands directly
+      rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
+      rl.prompt();
+    } else if (choice === '2') {
+      rl.question('Enter the path to the command file: ', (filePath) => {
+        fileInputEmitter.emit('processFileCommands', filePath);
+      });
+    } else if (choice === '3') {
+      console.log('Goodbye!');
+      process.exit(0);
+    }
+  } else {
+    console.log('Invalid choice. Please enter 1, 2, or 3.');
+    promptForChoice();
+  }
 }
 
 // Event handler for user input
@@ -102,8 +102,7 @@ userInputEmitter.on('userInput', (line: string) => {
 
   rl.prompt();
 });
-// Start by prompting for the user's choice
-promptForChoice();
+
 // Event handler for processing commands from a file
 fileInputEmitter.on('processFileCommands', (filePath: string) => {
   if (fs.existsSync(filePath)) {
@@ -129,3 +128,6 @@ fileInputEmitter.on('processFileCommands', (filePath: string) => {
     promptForChoice();
   }
 });
+
+// Start by prompting for the user's choice
+promptForChoice();
