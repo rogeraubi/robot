@@ -64,7 +64,7 @@ function promptForChoice() {
           rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
           rl.prompt();
         } else if (choice === '2') {
-          fileInputEmitter.emit('processFileCommands', 'commands.txt');
+          fileInputEmitter.emit('processFileCommands', 'data/commands.txt');
         } else if (choice === '3') {
           console.log('Goodbye!');
           process.exit(0);
@@ -118,5 +118,6 @@ fileInputEmitter.on('processFileCommands', (filePath: string) => {
     commands.forEach((command) => {
       userInputEmitter.emit('userInput', command);
     });
+     process.exit(0);
   });
 })

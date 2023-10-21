@@ -76,7 +76,7 @@ class ToyRobot {
 
   public report(): string {
     if (this.x === null || this.y === null || this.facing === null) {
-      return 'Robot is not placed on the table.'+`${this.x},${this.y},${this.facing}`;
+      return 'Robot is not placed on the table.';
     }
     return `${this.x},${this.y},${this.facing}`;
   }
