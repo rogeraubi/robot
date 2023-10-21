@@ -17,9 +17,8 @@ const fileInputEmitter = new EventEmitter();
 
 // Function to handle PLACE command
 function placeCommand(commandArgs: string) {
-    const [x, y, facing] = commandArgs.split(',');
-    robot.place(parseInt(x), parseInt(y), facing);
-  
+  const [x, y, facing] = commandArgs.split(',');
+  robot.place(parseInt(x), parseInt(y), facing);
 }
 // Function to handle different commands
 function handleCommand(command: string) {
@@ -61,7 +60,9 @@ function promptForChoice() {
       if (validateChoice(choice)) {
         if (choice === '1') {
           // If the user chooses to enter commands directly
-          rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
+          rl.setPrompt(
+            'Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ',
+          );
           rl.prompt();
         } else if (choice === '2') {
           fileInputEmitter.emit('processFileCommands', 'data/commands.txt');
@@ -73,7 +74,7 @@ function promptForChoice() {
         console.log('Invalid choice. Please enter 1, 2, or 3.');
         promptForChoice();
       }
-    }
+    },
   );
 }
 
@@ -105,19 +106,26 @@ userInputEmitter.on('userInput', (line: string) => {
 promptForChoice();
 // Event handler for processing commands from a file
 fileInputEmitter.on('processFileCommands', (filePath: string) => {
-  const fileStream = fs.createReadStream(filePath, 'utf-8');
-  const commands: string[] = [];
-  fileStream.on('data', (data: string) => {
-    // Split the file content into individual commands based on newlines
-    const fileCommands = data.split('\n');
-    commands.push(...fileCommands);
-  });
-
-  fileStream.on('end', () => {
-    // Process each command from the file
-    commands.forEach((command) => {
-      userInputEmitter.emit('userInput', command);
+  if (fs.existsSync(filePath)) {
+    const fileStream = fs.createReadStream(filePath, 'utf-8');
+    const commands: string[] = [];
+    fileStream.on('data', (data: string) => {
+      // Split the file content into individual commands based on newlines
+      const fileCommands = data.split('\n');
+      commands.push(...fileCommands);
     });
-     process.exit(0);
-  });
-})
+
+    fileStream.on('end', () => {
+      // Process each command from the file
+      commands.forEach((command) => {
+        userInputEmitter.emit('userInput', command);
+      });
+      process.exit(0);
+    });
+  } else {
+    console.log(
+      `File '${filePath}' does not exist. Please provide a valid file path.`,
+    );
+    promptForChoice();
+  }
+});
