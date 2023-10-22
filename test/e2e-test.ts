@@ -1,6 +1,5 @@
 import { spawn } from 'child_process';
 
-// Replace 'ts-node src/app.ts' with the actual command to run your application.
 const app = spawn('ts-node', ['src/app.ts'], {
   stdio: 'pipe',
 });
@@ -14,7 +13,6 @@ app.stdout.setEncoding('utf8');
 app.stdout.on('data', (data) => {
   output += data;
 
-  // Check if the output contains the expected result
   if (output.includes(expectedOutput)) {
     app.kill('SIGINT');
   }
@@ -28,10 +26,8 @@ app.on('close', (code) => {
   }
 });
 
-// Send commands to the application's stdin
 commands.forEach((command) => {
   app.stdin.write(command);
 });
 
-// Close the stdin to signal the end of input
 app.stdin.end();
