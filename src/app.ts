@@ -65,7 +65,10 @@ function handleChoice(choice: string) {
       rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
       rl.prompt();
     } else if (choice === '2') {
-      rl.question('Enter the path to the command file: ', (filePath) => {
+      rl.question('Enter the path to the command file (default: data/command.txt): ',  (filePath) => {
+        if (!filePath) {
+          filePath = 'data/command.txt';
+        }
         fileInputEmitter.emit('processFileCommands', filePath);
       });
     } else if (choice === '3') {
@@ -116,6 +119,9 @@ fileInputEmitter.on('processFileCommands', (filePath: string) => {
 
     fileStream.on('end', () => {
       // Process each command from the file
+      console.log(`Content of file '${filePath}':`);
+      console.log(commands.join('->')); // Log the content
+      console.log("\n**result**\n");
       commands.forEach((command) => {
         userInputEmitter.emit('userInput', command);
       });
