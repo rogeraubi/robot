@@ -53,12 +53,12 @@ function validateChoice(choice: string) {
 }
 
 // Function to prompt the user for their choice
-function promptForChoice() {
+export function promptForChoice() {
   rl.question('Choose an option:\n1. Enter commands directly\n2. Process commands from a file\n3. Exit\n', handleChoice);
 }
 
 // Function to handle the user's choice
-function handleChoice(choice: string) {
+export function handleChoice(choice: string) {
   if (validateChoice(choice)) {
     if (choice === '1') {
       // If the user chooses to enter commands directly
