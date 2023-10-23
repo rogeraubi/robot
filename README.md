@@ -4,6 +4,7 @@
 ## Table of Contents
 - [Features](#Features)
 - [Installation](#installation)
+- [How does it work](#How-does-it-work)
 - [Usage](#usage)
 - [Testing](#testing)
 - [Linting and Formatting](#linting-and-formatting)
@@ -72,7 +73,7 @@ The application performs command validation to ensure the commands entered are c
 This command will start the application using `ts-node`. It's useful during development for quick testing.
 
 
-## Usage for Dev and Production 
+## Usage
 
 To run the ronyRobot application, you have the following options:
 
