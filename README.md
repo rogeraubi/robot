@@ -8,7 +8,7 @@
 - [Usage](#usage)
 - [Testing](#testing)
 - [Linting and Formatting](#linting-and-formatting)
-- [Contributing](#contributing)
+- [Contributing](#Contributing-(optional))
 - [License](#license)
 
 
@@ -39,6 +39,8 @@ This will install all the required packages as specified in the `package.json` f
 This command starts the application, providing you with three options to control the robot:
 
 ### User Interface
+
+const tableSize = 5, the tableSize is defined as a constants in the app.ts and it can be a variable from input or defined as a variable in the env file 
 
 1. **Enter Commands Directly**: Allows you to interact with the robot by entering commands directly through the console.
 
