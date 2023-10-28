@@ -54,7 +54,10 @@ function validateChoice(choice: string) {
 
 // Function to prompt the user for their choice
 export function promptForChoice() {
-  rl.question('Choose an option:\n1. Enter commands directly\n2. Process commands from a file\n3. Exit\n', handleChoice);
+  rl.question(
+    'Choose an option:\n1. Enter commands directly\n2. Process commands from a file\n3. Exit\n',
+    handleChoice,
+  );
 }
 
 // Function to handle the user's choice
@@ -62,15 +65,20 @@ export function handleChoice(choice: string) {
   if (validateChoice(choice)) {
     if (choice === '1') {
       // If the user chooses to enter commands directly
-      rl.setPrompt('Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ');
+      rl.setPrompt(
+        'Enter a command (PLACE X,Y,F, MOVE, LEFT, RIGHT, REPORT, or QUIT): ',
+      );
       rl.prompt();
     } else if (choice === '2') {
-      rl.question('Enter the path to the command file (default: data/command.txt): ',  (filePath) => {
-        if (!filePath) {
-          filePath = 'data/command.txt';
-        }
-        fileInputEmitter.emit('processFileCommands', filePath);
-      });
+      rl.question(
+        'Enter the path to the command file (default: data/command.txt): ',
+        (filePath) => {
+          if (!filePath) {
+            filePath = 'data/command.txt';
+          }
+          fileInputEmitter.emit('processFileCommands', filePath);
+        },
+      );
     } else if (choice === '3') {
       console.log('Goodbye!');
       process.exit(0);
@@ -121,7 +129,7 @@ fileInputEmitter.on('processFileCommands', (filePath: string) => {
       // Process each command from the file
       console.log(`Content of file '${filePath}':`);
       console.log(commands.join('->')); // Log the content
-      console.log("\n**result**\n");
+      console.log('\n**result**\n');
       commands.forEach((command) => {
         userInputEmitter.emit('userInput', command);
       });
