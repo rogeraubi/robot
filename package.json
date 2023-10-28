@@ -5,6 +5,7 @@
   "main": "bundle.js",
   "scripts": {
     "dev": "ts-node src/app.ts",
+    "devReview": "ts-node src/appReview.ts",
     "test:unit": "nyc mocha --require ts-node/register 'test/**/*.spec.ts'",
     "build": "webpack --config webpack.config.js",
     "production": "node dist/bundle.js",
